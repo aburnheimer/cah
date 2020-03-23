@@ -7,7 +7,9 @@ import Content from "./components/Content";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      contentLegible: true
+    };
   }
 
   render() {
@@ -18,9 +20,9 @@ class App extends Component {
       footerMenuHeight: 90
     };
 
-    const menuItems = [
+    const initialMenuItems = [
       { icon: `▶️`, text: "Next" },
-      { icon: `💭`, text: "Hide" },
+      { icon: `💭`, text: "Show", clickFunction: () => { this.setState({contentLegible: !this.state["contentLegible"]}) } },
       { icon: `⏭`, text: "Skip" }
     ];
 
@@ -33,8 +35,8 @@ class App extends Component {
         }}
       >
         <TopBar styles={styles} />
-        <Content styles={styles} />
-        <FooterMenu menuItems={menuItems} styles={styles} />
+        <Content styles={styles} blur={this.state.contentLegible}/>
+        <FooterMenu initialMenuItems={initialMenuItems} styles={styles} />
       </div>
     );
   }
