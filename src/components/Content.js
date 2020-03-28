@@ -15,11 +15,6 @@ class Content extends React.Component {
 
   /* < 100 chars */
   render() {
-    const clue = {
-      text:
-        "Lorem ipsum dolor"
-    };
-
     const contentStyle = {
       fontSize: "180%",
       paddingTop: this.props.styles.topBarHeight + 20,
@@ -30,7 +25,7 @@ class Content extends React.Component {
     return (
       <div style={contentStyle}>
         <div style={{ marginBottom: 40 }}>
-          <h2 id="clue" style={this.blurredStyle(this.props.blur)}>{clue.text}</h2>
+          <h2 id="clue" style={this.blurredStyle(this.props.blur)}>{this.props.clueText}</h2>
         </div>
       </div>
     );

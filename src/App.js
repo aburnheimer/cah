@@ -8,7 +8,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contentLegible: true
+      contentLegible: true,
+      clueText: "Lorem ipsum dolor"
     };
   }
 
@@ -35,8 +36,8 @@ class App extends Component {
         }}
       >
         <TopBar styles={styles} />
-        <Content styles={styles} blur={this.state.contentLegible}/>
-        <FooterMenu initialMenuItems={initialMenuItems} styles={styles} />
+        <Content styles={styles} blur={this.state.contentLegible}  clueText={this.state.clueText}/>
+        <FooterMenu initialMenuItems={initialMenuItems} styles={styles}/>
       </div>
     );
   }
