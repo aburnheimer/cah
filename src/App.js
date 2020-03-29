@@ -16,10 +16,13 @@ class App extends Component {
     };
   }
 
+  getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
+
   fetchAllClues() {
     axios.get('resource', { params: { TableName: "cah-clue" } })
       .then(res => {
-
           const fetchedCluesList = [];
           for (let key in res.data.Items) {
             fetchedCluesList.push({
@@ -37,16 +40,15 @@ class App extends Component {
   fetchNextClue() {
     axios.get('resource', { params: { TableName: "cah-clue" } })
       .then(res => {
-
           var fetchedClueId = "";
           var fetchedClueText = "";
-          for (let key in res.data.Items) {
-            if(!res.data.Items[key].Guessed.BOOL){
-              fetchedClueId=res.data.Items[key].ClueId.S;
-              fetchedClueText=res.data.Items[key].Text.S;
-              break;
-            }
-          }
+          let unguessedClues = res.data.Items.filter(obj => {
+            return obj.Guessed.BOOL === false;
+          });
+          var key=this.getRandomInt(unguessedClues.length);
+          fetchedClueId=unguessedClues[key].ClueId.S;
+          fetchedClueText=unguessedClues[key].Text.S;
+          if(fetchedClueText.length<1){ console.warn("fetchNextClue clueText.length<1"); }
           this.setState({clueId: fetchedClueId})
           this.setState({clueText: fetchedClueText})
       })
