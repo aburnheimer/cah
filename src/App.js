@@ -38,19 +38,10 @@ class App extends Component {
     }
 
   fetchNextClue() {
-    axios.get('resource', { params: { TableName: "cah-clue" } })
+    axios.get('action/fetchNextClue')
       .then(res => {
-          var fetchedClueId = "";
-          var fetchedClueText = "";
-          let unguessedClues = res.data.Items.filter(obj => {
-            return obj.Guessed.BOOL === false;
-          });
-          var key=this.getRandomInt(unguessedClues.length);
-          fetchedClueId=unguessedClues[key].ClueId.S;
-          fetchedClueText=unguessedClues[key].Text.S;
-          if(fetchedClueText.length<1){ console.warn("fetchNextClue clueText.length<1"); }
-          this.setState({clueId: fetchedClueId})
-          this.setState({clueText: fetchedClueText})
+          this.setState({clueId: res.data.ClueId})
+          this.setState({clueText: res.data.Text})
       })
       .catch(err => {
           console.error("fetchNextClue: " + err);
