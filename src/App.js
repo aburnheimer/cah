@@ -10,7 +10,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contentLegible: true,
+      contentLegible: false,
       clueId: "",
       clueText: "",
       cluesRemaining: 0
@@ -53,6 +53,16 @@ class App extends Component {
 
     }
 
+  toggleLegible() {
+    if(this.state["contentLegible"]){
+      this.setState({contentLegible: false});
+    } else {
+      this.setState({contentLegible: true});
+      setTimeout(function(ctx){ ctx.setState({contentLegible: false}); }, 3000, this);
+    }
+  }
+
+
   render() {
     const styles = {
       white: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -63,7 +73,7 @@ class App extends Component {
 
     const initialMenuItems = [
       { icon: `▶️`, text: "Next", clickFunction: () => { this.fetchNextClue(true) } },
-      { icon: `💭`, text: "Show", clickFunction: () => { this.setState({contentLegible: !this.state["contentLegible"]}) } },
+      { icon: `💭`, text: "Show", clickFunction: () => { this.toggleLegible() } },
       { icon: `⏭`, text: "Skip", clickFunction: () => { this.fetchNextClue() } }
     ];
 
@@ -76,7 +86,7 @@ class App extends Component {
         }}
       >
         <TopBar styles={styles} cluesRemaining={this.state.cluesRemaining} />
-        <Content styles={styles} blur={this.state.contentLegible} clueText={this.state.clueText}/>
+        <Content styles={styles} blur={!this.state.contentLegible} clueText={this.state.clueText}/>
         <FooterMenu initialMenuItems={initialMenuItems} styles={styles}/>
       </div>
     );
