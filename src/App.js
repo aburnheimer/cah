@@ -13,8 +13,21 @@ class App extends Component {
       contentLegible: false,
       clueId: "",
       clueText: "",
-      cluesRemaining: 0
+      cluesRemaining: 0,
+      timeRunning: false,
+      secsRemaining: 60,
     };
+    setInterval(function(ctx){
+      if(ctx.state.timeRunning) {
+        ctx.setState({secsRemaining: ctx.state.secsRemaining - 1});
+      }
+      if(ctx.state.secsRemaining < 0) {
+        ctx.setState({timeRunning: false, secsRemaining: 60,
+            clueText: `❌` + " Time's UP! " + `❌`});
+        ctx.setState({contentLegible: true})
+      }
+
+    }, 1000, this);
   }
 
   fetchAllClues() {
@@ -34,7 +47,7 @@ class App extends Component {
 
     }
 
-  fetchNextClue(guessedClue=false) {
+  fetchNextClue(guessedClue=false, firstClue=false) {
     var queryParams = {};
     if(guessedClue && this.state.clueId.length > 0 ){
       queryParams["params"] = {};
@@ -46,6 +59,10 @@ class App extends Component {
           this.setState({clueId: res.data.ClueId});
           this.setState({clueText: res.data.Text});
           this.setState({cluesRemaining: res.data.CluesRemaining});
+          this.setState({timeRunning: true});
+          if(firstClue) this.setState({secsRemaining: 60});
+          this.setState({contentLegible: true})
+          setTimeout(function(ctx){ if (ctx.state.timeRunning) ctx.setState({contentLegible: false}); }, 3000, this);
       })
       .catch(err => {
           console.error("fetchNextClue: " + err);
@@ -54,11 +71,13 @@ class App extends Component {
     }
 
   toggleLegible() {
-    if(this.state["contentLegible"]){
-      this.setState({contentLegible: false});
-    } else {
-      this.setState({contentLegible: true});
-      setTimeout(function(ctx){ ctx.setState({contentLegible: false}); }, 3000, this);
+    if (this.state.timeRunning){
+      if(this.state["contentLegible"]){
+        this.setState({contentLegible: false});
+      } else {
+        this.setState({contentLegible: true});
+        setTimeout(function(ctx){ if (ctx.state.timeRunning) ctx.setState({contentLegible: false}); }, 3000, this);
+      }
     }
   }
 
@@ -72,9 +91,9 @@ class App extends Component {
     };
 
     const initialMenuItems = [
-      { icon: `▶️`, text: "Next", clickFunction: () => { this.fetchNextClue(true) } },
+      { icon: `▶️`, text: "Next", clickFunction: () => { this.fetchNextClue(true, !this.state.timeRunning) } },
       { icon: `💭`, text: "Show", clickFunction: () => { this.toggleLegible() } },
-      { icon: `⏭`, text: "Skip", clickFunction: () => { this.fetchNextClue() } }
+      { icon: `⏭`, text: "Skip", clickFunction: () => { this.fetchNextClue(false, !this.state.timeRunning) } }
     ];
 
     return (
@@ -85,8 +104,10 @@ class App extends Component {
           position: "relative"
         }}
       >
-        <TopBar styles={styles} cluesRemaining={this.state.cluesRemaining} />
-        <Content styles={styles} blur={!this.state.contentLegible} clueText={this.state.clueText}/>
+        <TopBar styles={styles} secsRemaining={this.state.secsRemaining}
+            cluesRemaining={this.state.cluesRemaining} />
+        <Content styles={styles} blur={!this.state.contentLegible}
+            clueText={this.state.clueText}/>
         <FooterMenu initialMenuItems={initialMenuItems} styles={styles}/>
       </div>
     );

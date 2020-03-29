@@ -20,7 +20,7 @@ class TopBar extends React.Component {
 
     return (
       <div style={topBarStyle}>
-        <span>0:00</span>
+        <span>{this.props.secsRemaining}</span>
         <span>{this.props.cluesRemaining}</span>
         <span>{`⏏️`}</span>
       </div>
