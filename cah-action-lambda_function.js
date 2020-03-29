@@ -29,17 +29,18 @@ exports.handler = (event, context, callback) => {
     case 'fetchNextClue':
       switch (event.httpMethod) {
         case 'GET':
-          dynamo.scan({ TableName: "cah-clue" }, function(err, res) {
+          dynamo.scan({ ScanFilter: { "Guessed" : {
+            "AttributeValueList": [ {
+              "BOOL": false
+            } ],
+            "ComparisonOperator": "EQ"
+          } }, TableName: "cah-clue" }, function(err, res) {
             if(!err){
               var fetchedClueId = "";
               var fetchedClueText = "";
-              var unguessedClues = [];
-              unguessedClues = res.Items.filter(obj => {
-                return obj.Guessed.BOOL === false;
-              });
-              var key=getRandomInt(unguessedClues.length);
-              fetchedClueId=unguessedClues[key].ClueId.S;
-              fetchedClueText=unguessedClues[key].Text.S;
+              var key=getRandomInt(res.Items.length);
+              fetchedClueId=res.Items[key].ClueId.S;
+              fetchedClueText=res.Items[key].Text.S;
               if(fetchedClueText.length<1){ console.warn("fetchNextClue clueText.length<1"); }
               done(null, { ClueId: fetchedClueId, Text: fetchedClueText });
             } else {
