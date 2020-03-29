@@ -12,12 +12,9 @@ class App extends Component {
     this.state = {
       contentLegible: true,
       clueId: "",
-      clueText: ""
+      clueText: "",
+      cluesRemaining: 0
     };
-  }
-
-  getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
   }
 
   fetchAllClues() {
@@ -46,8 +43,9 @@ class App extends Component {
 
     axios.get('action/fetchNextClue', queryParams)
       .then(res => {
-          this.setState({clueId: res.data.ClueId})
-          this.setState({clueText: res.data.Text})
+          this.setState({clueId: res.data.ClueId});
+          this.setState({clueText: res.data.Text});
+          this.setState({cluesRemaining: res.data.CluesRemaining});
       })
       .catch(err => {
           console.error("fetchNextClue: " + err);
@@ -77,8 +75,8 @@ class App extends Component {
           position: "relative"
         }}
       >
-        <TopBar styles={styles} />
-        <Content styles={styles} blur={this.state.contentLegible}  clueText={this.state.clueText}/>
+        <TopBar styles={styles} cluesRemaining={this.state.cluesRemaining} />
+        <Content styles={styles} blur={this.state.contentLegible} clueText={this.state.clueText}/>
         <FooterMenu initialMenuItems={initialMenuItems} styles={styles}/>
       </div>
     );

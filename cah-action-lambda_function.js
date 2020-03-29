@@ -27,11 +27,13 @@ exports.handler = (event, context, callback) => {
     if(!err){
       var fetchedClueId = "";
       var fetchedClueText = "";
-      var key=getRandomInt(res.Items.length);
-      fetchedClueId=res.Items[key].ClueId.S;
-      fetchedClueText=res.Items[key].Text.S;
-      if(fetchedClueText.length<1){ console.warn("fetchNextClue clueText.length<1"); }
-      done(null, { ClueId: fetchedClueId, Text: fetchedClueText });
+      if(res.Items.length>0){
+        var key=getRandomInt(res.Items.length);
+        fetchedClueId=res.Items[key].ClueId.S;
+        fetchedClueText=res.Items[key].Text.S;
+        if(fetchedClueText.length<1){ console.warn("fetchNextClue clueText.length<1"); }
+      }
+      done(null, { ClueId: fetchedClueId, Text: fetchedClueText, CluesRemaining: res.Items.length});
     } else {
       done(err);
     }
