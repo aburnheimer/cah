@@ -37,8 +37,14 @@ class App extends Component {
 
     }
 
-  fetchNextClue() {
-    axios.get('action/fetchNextClue')
+  fetchNextClue(guessedClue=false) {
+    var queryParams = {};
+    if(guessedClue && this.state.clueId.length > 0 ){
+      queryParams["params"] = {};
+      queryParams["params"]["guessedClue"] = this.state.clueId;
+    }
+
+    axios.get('action/fetchNextClue', queryParams)
       .then(res => {
           this.setState({clueId: res.data.ClueId})
           this.setState({clueText: res.data.Text})
@@ -58,9 +64,9 @@ class App extends Component {
     };
 
     const initialMenuItems = [
-      { icon: `▶️`, text: "Next", clickFunction: () => { this.fetchNextClue() } },
+      { icon: `▶️`, text: "Next", clickFunction: () => { this.fetchNextClue(true) } },
       { icon: `💭`, text: "Show", clickFunction: () => { this.setState({contentLegible: !this.state["contentLegible"]}) } },
-      { icon: `⏭`, text: "Skip" }
+      { icon: `⏭`, text: "Skip", clickFunction: () => { this.fetchNextClue() } }
     ];
 
     return (
