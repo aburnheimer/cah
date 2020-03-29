@@ -3,15 +3,58 @@ import React, { Component } from "react";
 import TopBar from "./components/TopBar";
 import FooterMenu from "./components/FooterMenu";
 import Content from "./components/Content";
+import axios from './Axios';
+
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       contentLegible: true,
-      clueText: "Lorem ipsum dolor"
+      clueId: "",
+      clueText: ""
     };
   }
+
+  fetchAllClues() {
+    axios.get('resource', { params: { TableName: "cah-clue" } })
+      .then(res => {
+
+          const fetchedCluesList = [];
+          for (let key in res.data.Items) {
+            fetchedCluesList.push({
+                ...res.data.Items[key]
+            });
+          }
+          this.setState({clues: fetchedCluesList})
+      })
+      .catch(err => {
+        console.error("fetchAllClues: " + err);
+      });
+
+    }
+
+  fetchNextClue() {
+    axios.get('resource', { params: { TableName: "cah-clue" } })
+      .then(res => {
+
+          var fetchedClueId = "";
+          var fetchedClueText = "";
+          for (let key in res.data.Items) {
+            if(!res.data.Items[key].Guessed.BOOL){
+              fetchedClueId=res.data.Items[key].ClueId.S;
+              fetchedClueText=res.data.Items[key].Text.S;
+              break;
+            }
+          }
+          this.setState({clueId: fetchedClueId})
+          this.setState({clueText: fetchedClueText})
+      })
+      .catch(err => {
+          console.error("fetchNextClue: " + err);
+      });
+
+    }
 
   render() {
     const styles = {
@@ -22,7 +65,7 @@ class App extends Component {
     };
 
     const initialMenuItems = [
-      { icon: `▶️`, text: "Next" },
+      { icon: `▶️`, text: "Next", clickFunction: () => { this.fetchNextClue() } },
       { icon: `💭`, text: "Show", clickFunction: () => { this.setState({contentLegible: !this.state["contentLegible"]}) } },
       { icon: `⏭`, text: "Skip" }
     ];
