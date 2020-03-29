@@ -23,30 +23,53 @@ exports.handler = (event, context, callback) => {
       },
   });
 
+  const returnRandomUnguessedClue = (err, res) => {
+    if(!err){
+      var fetchedClueId = "";
+      var fetchedClueText = "";
+      var key=getRandomInt(res.Items.length);
+      fetchedClueId=res.Items[key].ClueId.S;
+      fetchedClueText=res.Items[key].Text.S;
+      if(fetchedClueText.length<1){ console.warn("fetchNextClue clueText.length<1"); }
+      done(null, { ClueId: fetchedClueId, Text: fetchedClueText });
+    } else {
+      done(err);
+    }
+  };
+
   console.log('Loading function');
 
   switch(event.pathParameters.proxy) {
     case 'fetchNextClue':
       switch (event.httpMethod) {
         case 'GET':
-          dynamo.scan({ ScanFilter: { "Guessed" : {
-            "AttributeValueList": [ {
-              "BOOL": false
-            } ],
-            "ComparisonOperator": "EQ"
-          } }, TableName: "cah-clue" }, function(err, res) {
-            if(!err){
-              var fetchedClueId = "";
-              var fetchedClueText = "";
-              var key=getRandomInt(res.Items.length);
-              fetchedClueId=res.Items[key].ClueId.S;
-              fetchedClueText=res.Items[key].Text.S;
-              if(fetchedClueText.length<1){ console.warn("fetchNextClue clueText.length<1"); }
-              done(null, { ClueId: fetchedClueId, Text: fetchedClueText });
+          if("queryStringParameters" in event &&
+              event.queryStringParameters && "guessedClue" in event.queryStringParameters &&
+              event.queryStringParameters["guessedClue"].length > 0){
+            dynamo.updateItem({
+                Key:{ "ClueId": { "S": event.queryStringParameters["guessedClue"] } },
+                UpdateExpression: "SET Guessed=:g",
+                ExpressionAttributeValues: { ":g": { "BOOL": true } },
+                TableName: "cah-clue" }, function(err, res) {
+              if(!err){ // Same as scan() below, but depending on updateItem() as a cause
+                dynamo.scan({ ScanFilter: { "Guessed" : {
+                  "AttributeValueList": [ {
+                    "BOOL": false
+                  } ],
+                  "ComparisonOperator": "EQ"
+                } }, TableName: "cah-clue" }, function(err, res) { returnRandomUnguessedClue(err, res) });
+              } else {
+                done(err);
+              }
+            });
             } else {
-              done(err);
+              dynamo.scan({ ScanFilter: { "Guessed" : {
+                "AttributeValueList": [ {
+                  "BOOL": false
+                } ],
+                "ComparisonOperator": "EQ"
+              } }, TableName: "cah-clue" }, function(err, res) { returnRandomUnguessedClue(err, res) });
             }
-          });
           break;
         default:
           done(new Error(`Unsupported method "${event.pathParameters.proxy} ${event.httpMethod}"`));
