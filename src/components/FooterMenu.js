@@ -2,22 +2,26 @@ import React from "react";
 
 class FooterMenu extends React.Component {
 
+  footerMenuStyle = () => {
+    var style = {
+      display: "flex",
+      alignItems: "stretch",
+      fontSize: "150%",
+      width: "100%",
+      height: this.props.styles.footerMenuHeight,
+      backgroundColor: "#333",
+      color: "#fff",
+      position: "fixed",
+      bottom: 0
+    }
+    if(this.props.currentRound <= 0) style["display"] = "none"
+    return style;
+  }
+
   render() {
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "stretch",
-          fontSize: "150%",
-          width: "100%",
-          height: this.props.styles.footerMenuHeight,
-          backgroundColor: "#333",
-          color: "#fff",
-          position: "fixed",
-          bottom: 0
-        }}
-      >
-        {this.props.initialMenuItems.map((item, i) => {
+      <div style={this.footerMenuStyle()}>
+        {this.props.menuItems.map((item, i) => {
           return (
             <div
               key={i}

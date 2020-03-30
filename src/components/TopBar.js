@@ -1,14 +1,14 @@
 import React from "react";
 
 class TopBar extends React.Component {
-  timeRunStop=(timeRunning)=>{
+  timeRunStop = (timeRunning) => {
     var style={};
     style["color"]=timeRunning?"limeGreen":"tomato";
     return style;
   }
 
-  render() {
-    const topBarStyle = {
+  topBarStyle = () => {
+    var style = {
       position: "fixed",
       top: 0,
       display: "flex",
@@ -23,9 +23,13 @@ class TopBar extends React.Component {
       padding: "0px 20px",
       boxSizing: "border-box"
     };
+    if(this.props.currentRound <= 0) style["display"] = "none"
+    return style;
+  }
 
+  render() {
     return (
-      <div style={topBarStyle}>
+      <div style={this.topBarStyle()}>
         <div style={this.timeRunStop(this.props.timeRunning)} onClick={()=>this.props.clickFunction()}>
           <span>{this.props.secsRemaining}</span>
         </div>

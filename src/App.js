@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import TopBar from "./components/TopBar";
 import FooterMenu from "./components/FooterMenu";
 import Content from "./components/Content";
+import Config from "./components/Config";
 import axios from './Axios';
 
 
@@ -16,7 +17,10 @@ class App extends Component {
       cluesRemaining: 0,
       timeRunning: false,
       secsRemaining: 60,
-      initialClue: true
+      initialClue: true,
+      games: [],
+      currentGame: {},
+      currentRound: 0
     };
     setInterval(function(ctx){
       if(ctx.state.timeRunning) {
@@ -24,11 +28,27 @@ class App extends Component {
       }
       if(ctx.state.secsRemaining <= 0) {
         ctx.setState({contentLegible: true, clueId: "",
-            clueText: `❌` + " Time's UP! " + `❌`, timeRunning: false,
+            clueText: "`❌` Time's UP! `❌`", timeRunning: false,
             initialClue: true });
       }
 
     }, 1000, this);
+  }
+
+  fetchAllGames() {
+    axios.get('resource', { params: { TableName: "cah-game" } })
+      .then(res => {
+          var fetchedGamesList = [];
+          for (let key in res.data.Items) {
+            fetchedGamesList.push({
+                ...res.data.Items[key]
+            });
+          }
+          this.setState({games: fetchedGamesList})
+      })
+      .catch(err => {
+        console.error("fetchAllGames: " + err);
+      });
   }
 
   fetchAllClues() {
@@ -45,8 +65,7 @@ class App extends Component {
       .catch(err => {
         console.error("fetchAllClues: " + err);
       });
-
-    }
+  }
 
   fetchNextClue(guessedClue=false, initialClue=false) {
     var queryParams = {};
@@ -90,6 +109,10 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    this.fetchAllGames();
+  }
+
   render() {
     const styles = {
       white: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -98,7 +121,7 @@ class App extends Component {
       footerMenuHeight: 90
     };
 
-    const initialMenuItems = [
+    const clueMenuItems = [
       { icon: `▶️`, text: "Next", clickFunction: () => {
           this.fetchNextClue(true, this.state.initialClue) } },
       { icon: `💭`, text: "Show", clickFunction: () => { this.toggleLegible() } },
@@ -117,10 +140,15 @@ class App extends Component {
         <TopBar styles={styles} clickFunction={() => { this.toggleTimeRunning() }}
             timeRunning={this.state.timeRunning}
             secsRemaining={this.state.secsRemaining}
-            cluesRemaining={this.state.cluesRemaining} />
+            cluesRemaining={this.state.cluesRemaining}
+            currentRound={this.state.currentRound} />
+        <Config styles={styles} currentRound={this.state.currentRound}
+            games={this.state.games} currentGame={this.state.currentGame} />
         <Content styles={styles} blur={!this.state.contentLegible}
-            clueText={this.state.clueText}/>
-        <FooterMenu initialMenuItems={initialMenuItems} styles={styles}/>
+            clueText={this.state.clueText}
+            currentRound={this.state.currentRound} />
+        <FooterMenu menuItems={clueMenuItems} styles={styles}
+        currentRound={this.state.currentRound} />
       </div>
     );
   }
