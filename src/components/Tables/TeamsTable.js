@@ -1,6 +1,6 @@
 import React from "react";
 
-class GamesTable extends React.Component {
+class TeamsTable extends React.Component {
   constructor(props) {
     super(props);
 
@@ -32,20 +32,20 @@ class GamesTable extends React.Component {
             <tr>
               <td></td>
               <td>Name</td>
-              <td style={tdNumStyle}>Num of Teams</td>
-              <td style={tdNumStyle}>Num of Rounds</td>
-              <td style={tdNumStyle}>Current Round</td>
+              <td>Captain</td>
+              <td style={tdNumStyle}>Order</td>
+              <td>Game</td>
             </tr>
           </thead>
           <tbody>
-            {this.props.games.map((item, i) => {
+            {this.props.teams.map((item, i) => {
               return(
                 <tr key={i}>
                   <td><input type="radio"/></td>
                   <td>{item.Name.S}</td>
-                  <td style={tdNumStyle}></td>
-                  <td style={tdNumStyle}>{item.NumRounds.N}</td>
-                  <td style={tdNumStyle}>{item.CurrentRound.N}</td>
+                  <td>{item.CaptainId.S}</td>
+                  <td style={tdNumStyle}>{item.SeqNum.N}</td>
+                  <td>{item.GameId.S}</td>
                 </tr>
               )
             })}
@@ -56,4 +56,4 @@ class GamesTable extends React.Component {
   }
 };
 
-export default GamesTable;
+export default TeamsTable;

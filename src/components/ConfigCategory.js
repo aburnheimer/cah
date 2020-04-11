@@ -1,6 +1,8 @@
 import React from "react";
 import GamesForm from "./Forms/GamesForm";
 import GamesTable from "./Tables/GamesTable";
+import PlayersTable from "./Tables/PlayersTable";
+import TeamsTable from "./Tables/TeamsTable";
 
 class ConfigCategory extends React.Component {
 
@@ -22,8 +24,12 @@ class ConfigCategory extends React.Component {
     };
 
     var tableReturn = null;
-    if(this.props.category == "Games") {
+    if(this.props.category === "Games") {
       tableReturn = <GamesTable games={this.props.games}></GamesTable>
+    } else if(this.props.category === "Players") {
+      tableReturn = <PlayersTable players={this.props.players}></PlayersTable>
+    } else if(this.props.category === "Teams") {
+      tableReturn = <TeamsTable teams={this.props.teams}></TeamsTable>
     }
     return (
       <div style={contentStyle}>

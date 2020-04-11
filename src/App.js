@@ -19,6 +19,8 @@ class App extends Component {
       secsRemaining: 60,
       initialClue: true,
       games: [],
+      teams: [],
+      players: [],
       currentGame: {},
       currentRound: 0
     };
@@ -48,6 +50,39 @@ class App extends Component {
       })
       .catch(err => {
         console.error("fetchAllGames: " + err);
+      });
+  }
+
+
+  fetchAllTeams() {
+    axios.get('resource', { params: { TableName: "cah-team" } })
+      .then(res => {
+          var fetchedTeamsList = [];
+          for (let key in res.data.Items) {
+            fetchedTeamsList.push({
+                ...res.data.Items[key]
+            });
+          }
+          this.setState({teams: fetchedTeamsList})
+      })
+      .catch(err => {
+        console.error("fetchAllTeams: " + err);
+      });
+  }
+
+  fetchAllPlayers() {
+    axios.get('resource', { params: { TableName: "cah-player" } })
+      .then(res => {
+          var fetchedPlayersList = [];
+          for (let key in res.data.Items) {
+            fetchedPlayersList.push({
+                ...res.data.Items[key]
+            });
+          }
+          this.setState({players: fetchedPlayersList})
+      })
+      .catch(err => {
+        console.error("fetchAllPlayers: " + err);
       });
   }
 
@@ -111,6 +146,8 @@ class App extends Component {
 
   componentDidMount() {
     this.fetchAllGames();
+    this.fetchAllTeams();
+    this.fetchAllPlayers();
   }
 
   render() {
@@ -134,6 +171,8 @@ class App extends Component {
         style={{
           backgroundColor: styles.black(0.05),
           minHeight: "100vh",
+          margin: "0 auto",
+          maxWidth: "1024px",
           position: "relative"
         }}
       >
@@ -143,7 +182,8 @@ class App extends Component {
             cluesRemaining={this.state.cluesRemaining}
             currentRound={this.state.currentRound} />
         <Config styles={styles} currentRound={this.state.currentRound}
-            games={this.state.games} currentGame={this.state.currentGame} />
+            games={this.state.games} currentGame={this.state.currentGame}
+            teams={this.state.teams} players={this.state.players} />
         <Content styles={styles} blur={!this.state.contentLegible}
             clueText={this.state.clueText}
             currentRound={this.state.currentRound} />
