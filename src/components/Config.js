@@ -6,7 +6,6 @@ class Config extends React.Component {
   /* < 100 chars */
   render() {
     const contentStyle = {
-      fontSize: "180%"
     };
 
     return (
