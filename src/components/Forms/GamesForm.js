@@ -3,7 +3,6 @@ import React from "react";
 class GamesForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: 'grapefruit'};
 
     this.handleChange = this.handleChange.bind(this);
   }

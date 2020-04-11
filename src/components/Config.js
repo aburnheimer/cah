@@ -1,5 +1,5 @@
 import React from "react";
-import GamesForm from "./Forms/GamesForm";
+import ConfigCategory from "./ConfigCategory";
 
 class Config extends React.Component {
 
@@ -11,15 +11,11 @@ class Config extends React.Component {
 
     return (
       <div style={contentStyle}>
-        <div>
-          <h2 className="category">Games</h2>
-          <GamesForm games={this.props.games}
-              currentGame={this.props.currentGame}></GamesForm>
-          <h2 className="category">Teams</h2>
-          <h2 className="category">Players</h2>
-          <h2 className="category">Rounds</h2>
-          <h2 className="category">Clues</h2>
-        </div>
+        <ConfigCategory category="Games" games={this.props.games} currentGame={this.props.currentGame}></ConfigCategory>
+        <ConfigCategory category="Teams"></ConfigCategory>
+        <ConfigCategory category="Players"></ConfigCategory>
+        <ConfigCategory category="Rounds"></ConfigCategory>
+        <ConfigCategory category="Clues"></ConfigCategory>
       </div>
     );
   }
