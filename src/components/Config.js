@@ -11,8 +11,8 @@ class Config extends React.Component {
     return (
       <div style={contentStyle}>
         <ConfigCategory category="Games" games={this.props.games} currentGame={this.props.currentGame}></ConfigCategory>
-        <ConfigCategory category="Teams" teams={this.props.teams}></ConfigCategory>
-        <ConfigCategory category="Players" players={this.props.players}></ConfigCategory>
+        <ConfigCategory category="Teams" players={this.props.players} teams={this.props.teams} games={this.props.games}></ConfigCategory>
+        <ConfigCategory category="Players" teams={this.props.teams} players={this.props.players}></ConfigCategory>
       </div>
     );
   }

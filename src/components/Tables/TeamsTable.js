@@ -11,6 +11,24 @@ class TeamsTable extends React.Component {
     this.setState({value: event.target.value});
   }
 
+  playerNameByPlayerId(playerId) {
+    var ret = null;
+    if(playerId && this.props.players) {
+      var r = this.props.players.filter(player => player.PlayerId.S === playerId);
+      if(r.length > 0) ret = [r[0].GivenName.S, r[0].FamilyName.S].join(" ");
+    };
+    return ret;
+  }
+
+  gameNameByGameId(gameId) {
+    var ret = null;
+    if(gameId && this.props.games) {
+      var r = this.props.games.filter(game => game.GameId.S === gameId);
+      if(r.length > 0) ret = r[0].Name.S;
+    };
+    return ret;
+  }
+
   render() {
     const tableStyle = {
       fontSize: "small",
@@ -43,9 +61,9 @@ class TeamsTable extends React.Component {
                 <tr key={i}>
                   <td><input type="radio"/></td>
                   <td>{item.Name.S}</td>
-                  <td>{item.CaptainId.S}</td>
+                  <td>{this.playerNameByPlayerId(item.CaptainId.S)}</td>
                   <td style={tdNumStyle}>{item.SeqNum.N}</td>
-                  <td>{item.GameId.S}</td>
+                  <td>{this.gameNameByGameId(item.GameId.S)}</td>
                 </tr>
               )
             })}

@@ -5,10 +5,20 @@ class PlayersTable extends React.Component {
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
+    this.teamNameByTeamId = this.teamNameByTeamId.bind(this);
   }
 
   handleChange(event) {
     this.setState({value: event.target.value});
+  }
+
+  teamNameByTeamId(teamId) {
+    var ret = null;
+    if(teamId && this.props.teams) {
+      var r = this.props.teams.filter(team => team.TeamId.S === teamId);
+      if(r.length > 0) ret = r[0].Name.S;
+    };
+    return ret;
   }
 
   render() {
@@ -20,7 +30,7 @@ class PlayersTable extends React.Component {
     const theadStyle = {
       fontWeight: "bold"
     };
-    const tdNumStyle = {
+    const tdBoolStyle = {
       width: "4em",
       textAlign: "center"
     };
@@ -32,7 +42,7 @@ class PlayersTable extends React.Component {
             <tr>
               <td></td>
               <td>Name</td>
-              <td>Admin</td>
+              <td style={tdBoolStyle}>Admin</td>
               <td>Team</td>
             </tr>
           </thead>
@@ -42,8 +52,8 @@ class PlayersTable extends React.Component {
                 <tr key={i}>
                   <td><input type="radio"/></td>
                   <td>{item.GivenName.S} {item.FamilyName.S}</td>
-                  <td>{item.IsAdmin.BOOL?"yes":"no"}</td>
-                  <td>{item.TeamId.S}</td>
+                  <td style={tdBoolStyle}>{item.IsAdmin.BOOL?"yes":"no"}</td>
+                  <td>{this.teamNameByTeamId(item.TeamId.S)}</td>
                 </tr>
               )
             })}

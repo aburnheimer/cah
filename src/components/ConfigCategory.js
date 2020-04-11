@@ -27,9 +27,9 @@ class ConfigCategory extends React.Component {
     if(this.props.category === "Games") {
       tableReturn = <GamesTable games={this.props.games}></GamesTable>
     } else if(this.props.category === "Players") {
-      tableReturn = <PlayersTable players={this.props.players}></PlayersTable>
+      tableReturn = <PlayersTable players={this.props.players} teams={this.props.teams}></PlayersTable>
     } else if(this.props.category === "Teams") {
-      tableReturn = <TeamsTable teams={this.props.teams}></TeamsTable>
+      tableReturn = <TeamsTable teams={this.props.teams} players={this.props.players} games={this.props.games}></TeamsTable>
     }
     return (
       <div style={contentStyle}>
